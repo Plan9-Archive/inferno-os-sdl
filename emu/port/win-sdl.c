@@ -168,7 +168,7 @@ sdl_initscreen(int xsize, int ysize, ulong reqchan, ulong *chan, int *d)
 
 	// Wait for the video thread to come back before we continue:
 	readyq = qopen(sizeof(SDL_VideoInfo *), 0, nil, nil);
-	kproc("sdlproc", sdl_proc, readyq, 0);
+	kproc("sdlproc", sdl_proc, readyq, KPX11);
 	qread(readyq, &info, sizeof(SDL_VideoInfo *));
 	qfree(readyq);
 	readyq = nil;
