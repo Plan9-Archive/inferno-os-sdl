@@ -168,7 +168,8 @@ sdl_initscreen(int xsize, int ysize, ulong reqchan, ulong *chan, int *d)
 
 	// Wait for the video thread to come back before we continue:
 	readyq = qopen(sizeof(SDL_VideoInfo *), 0, nil, nil);
-	kproc("sdlproc", sdl_proc, readyq, KPX11);
+	//kproc("sdlproc", sdl_proc, readyq, KPX11);
+	kproc("sdlproc", sdl_proc, readyq, 0);
 	qread(readyq, &info, sizeof(SDL_VideoInfo *));
 	qfree(readyq);
 	readyq = nil;
@@ -425,19 +426,22 @@ drawcursor(Drawcursor* c)
 {
 }
 
+
+static char *snarfbuffer = nil;
 /*
- * Cut and paste.
+ * Snarf buffer.
  * FIXME:  I don't think SDL 1.2 has facilities for this; 2.0 seems to.
  */
 char*
 clipread(void)
 {
-	return strdup("");
+	if(snarfbuffer == nil)
+		return nil;
+	return strdup(snarfbuffer);
 }
 
 int
 clipwrite(char *buf)
 {
-	USED(buf);
-	return -1;
+	snarfbuffer = strdup(buf);
 }
